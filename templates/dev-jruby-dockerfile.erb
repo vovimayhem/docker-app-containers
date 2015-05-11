@@ -1,0 +1,52 @@
+# The following image is heavily influenced by the docker-library official jruby
+# image (You can see the original source at https://github.com/cpuguy83/docker-jruby).
+#
+# However, There are some key differences:
+#
+#  - Is based on vovimayhem/app:base, which creates an 'app' user and group, in
+#  order to run the application with unprivileged access and sets the home in
+#  the '/app' folder, where the application code is expected to be, pretty much
+#  the way Heroku organizes a container's directory layout.
+#
+#  - Should build JRuby with DTrace enabled, making this image ideal for development
+#  environments. Please note that because of this, these images are not
+#  necessarily optimal for production environments.
+#
+#  - Sets the GEM_HOME directory to the '/app/vendor/bundle' folder, so gems
+#  can be inspected by the developer and provided by mounting the app in the
+#  volume.
+#
+FROM vovimayhem/app-dev:base-jruby
+MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
+
+RUN apt-get update && apt-get install -y libc6-dev --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
+ENV JRUBY_VERSION=<%= jruby_version %> JRUBY_SHA1=<%= jruby_sha1 %>
+
+RUN mkdir /opt/jruby \
+  && curl -fSL https://s3.amazonaws.com/jruby.org/downloads/${JRUBY_VERSION}/jruby-bin-${JRUBY_VERSION}.tar.gz -o /tmp/jruby.tar.gz \
+  && echo "$JRUBY_SHA1 /tmp/jruby.tar.gz" | sha1sum -c - \
+  && tar -zx --strip-components=1 -f /tmp/jruby.tar.gz -C /opt/jruby \
+  && rm /tmp/jruby.tar.gz \
+  && update-alternatives --install /usr/local/bin/ruby ruby /opt/jruby/bin/jruby 1
+
+ENV PATH /opt/jruby/bin:$PATH
+
+# Install bundler as system gem:
+RUN gem install bundler --no-rdoc --no-ri
+
+# Set the '/app/vendor/bundle' folder as the GEM_HOME - It will preserve
+# the original gem paths - check it with 'gem env':
+ENV GEM_HOME /app/vendor/bundle
+
+# Set the image user as the unprivileged 'app' user:
+USER app
+
+# Set the image's working directory to the '/app' folder, which is the 'app'
+# user's home:
+WORKDIR /app
+
+# Set BUNDLE_APP_CONFIG to GEM_PATH and set PATH to include app binaries:
+ENV BUNDLE_APP_CONFIG=$GEM_HOME PATH=/app/bin:$GEM_HOME/bin:$PATH
+
+CMD ["irb"]
