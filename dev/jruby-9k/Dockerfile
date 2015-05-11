@@ -1,4 +1,22 @@
-FROM vovimayhem/app-dev:base-node-jruby-dep
+# The following image is heavily influenced by the docker-library official jruby
+# image (You can see the original source at https://github.com/cpuguy83/docker-jruby).
+#
+# However, There are some key differences:
+#
+#  - Is based on vovimayhem/app:base, which creates an 'app' user and group, in
+#  order to run the application with unprivileged access and sets the home in
+#  the '/app' folder, where the application code is expected to be, pretty much
+#  the way Heroku organizes a container's directory layout.
+#
+#  - Should build JRuby with DTrace enabled, making this image ideal for development
+#  environments. Please note that because of this, these images are not
+#  necessarily optimal for production environments.
+#
+#  - Sets the GEM_HOME directory to the '/app/vendor/bundle' folder, so gems
+#  can be inspected by the developer and provided by mounting the app in the
+#  volume.
+#
+FROM vovimayhem/app-dev:base-jruby
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 RUN apt-get update && apt-get install -y libc6-dev --no-install-recommends && rm -rf /var/lib/apt/lists/*
