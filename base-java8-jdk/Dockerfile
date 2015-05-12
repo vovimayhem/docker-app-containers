@@ -5,7 +5,7 @@
 #
 #  - Sets the home in the '/app' folder, where the application code is expected
 #  to be, pretty much the way Heroku organizes a container's directory layout.
-FROM java:8-jdk
+FROM maven:3.3-jdk-8
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################
