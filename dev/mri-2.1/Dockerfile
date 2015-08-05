@@ -15,23 +15,23 @@
 #  - Sets the GEM_HOME directory to the '/app/vendor/bundle' folder, so gems
 #  can be inspected by the developer & provided by mounting the app in the
 #  volume.
-#
 FROM vovimayhem/app-dev:base-ruby
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################
 # 1: Building ruby
 # - Taken almost entirely from https://github.com/docker-library/ruby
-
-ENV RUBY_MAJOR 2.1
-ENV RUBY_VERSION 2.1.6
-ENV RUBY_DOWNLOAD_SHA256 1e1362ae7427c91fa53dc9c05aee4ee200e2d7d8970a891c5bd76bee28d28be4
-
+#
 # Some of ruby's build scripts are written in ruby. We'll purge this later in
 # this RUN command to make sure our final image uses what we just built.
 #
-# Please note that unlike the official ruby image, we're enabling DTrace:
-RUN apt-get update \
+# Please note that unlike the official ruby image, we're:
+#  - Compiling ruby with DTrace enabled.
+#  - Installing bundler as a system gem as part of the build step.
+#  - Setting the '/app/vendor/bundle' as the GEM_HOME variable
+#  - Adding '/app/bin' and '/app/vendor/bundle/bin' to the PATH variable
+RUN RUBY_MAJOR=2.1 RUBY_VERSION=2.1.6 RUBY_DOWNLOAD_SHA256=1e1362ae7427c91fa53dc9c05aee4ee200e2d7d8970a891c5bd76bee28d28be4 \
+	&& apt-get update \
 	&& apt-get install -y bison libgdbm-dev ruby systemtap-sdt-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
@@ -45,14 +45,20 @@ RUN apt-get update \
 	&& make -j"$(nproc)" \
 	&& make install \
 	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby systemtap-sdt-dev \
-	&& rm -r /usr/src/ruby
+	&& cd / && rm -r /usr/src/ruby \
+	&& gem install bundler --no-rdoc --no-ri
 
-# Install bundler as system gem:
-RUN gem install bundler --no-rdoc --no-ri
-
-# Set the '/app/vendor/bundle' folder as the GEM_HOME - It will preserve
-# the original gem paths - check it with 'gem env':
-ENV GEM_HOME /app/vendor/bundle
+################################################################################
+# Persisted Environment Variables:
+#  1: Set the GEM_HOME to the app's /app/vendor/bundle path. (It will preserve
+#     the original gem paths - check it with 'gem env')
+#  2: The path to the directory where bundler will store the local configuration.
+#  3: Prepend the following paths to $PATH:
+#      - The app's vendored gem binaries
+#      - The app's binaries
+ENV GEM_HOME=/app/vendor/bundle \
+	BUNDLE_APP_CONFIG=/app/vendor/bundle \
+	PATH=/app/bin:/app/vendor/bundle/bin:$PATH
 
 # Set the image user as the unprivileged 'app' user:
 USER app
@@ -60,8 +66,5 @@ USER app
 # Set the image's working directory to the '/app' folder, which is the 'app'
 # user's home:
 WORKDIR /app
-
-# Set BUNDLE_APP_CONFIG to GEM_PATH and set PATH to include app binaries:
-ENV BUNDLE_APP_CONFIG=$GEM_HOME PATH=/app/bin:$GEM_HOME/bin:$PATH
 
 CMD ["irb"]

@@ -15,23 +15,26 @@
 #  - Sets the GEM_HOME directory to the '/app/vendor/bundle' folder, so gems
 #  can be inspected by the developer & provided by mounting the app in the
 #  volume.
-#
 FROM vovimayhem/app-dev:base-ruby
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################
 # Building rubinius
-
-ENV RBX_VERSION=2.5.3 RBX_RELEASE_SHA1=c4323b9410a12e45c1c9da4a17607bd57ec1bb59
-
-# Set UTF-8 locale (Won't build unless these locales are set like this):
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-
-# The rubinius build script is written entirely in ruby. We'll purge this later
-# in this RUN command to make sure our final image uses what we just built.
 #
 # Please note that unlike the official ruby image, we're enabling DTrace:
-RUN apt-get update \
+#
+# Notes about the steps in the following RUN command:
+#  1: We set the Rubinius version and release SHA1 as variables which won't
+#     be persisted in the final image
+#  2: We also set the LANG and LC_ALL variables to C.UTF-8 for the command only,
+#     as Rubinius won't build unless these variables are set like this.
+#  3: The rubinius build script is written entirely in ruby. This installed
+#     ruby is purged later in this command to make sure our final image uses
+#     what we just built.
+#  4: Unlike the MRI Dockerfile routines, Bundler is already installed with Rubinius.
+RUN RBX_VERSION=2.5.3 RBX_RELEASE_SHA1=c4323b9410a12e45c1c9da4a17607bd57ec1bb59 \
+	LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+	&& apt-get update \
 	&& apt-get install -y bison bundler libedit-dev libgdbm-dev llvm-dev ruby systemtap-sdt-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
@@ -44,16 +47,21 @@ RUN apt-get update \
 	&& SHELL="/bin/bash" ./configure --prefix=/usr/local \
 	&& rake install \
 	&& SUDO_FORCE_REMOVE=yes apt-get purge -y --auto-remove bison bundler libedit-dev libgdbm-dev llvm-dev ruby systemtap-sdt-dev \
-	&& rm -r /usr/src/ruby
+	&& cd / && rm -r /usr/src/ruby
 
-# TODO: Fix the prefix path on the previous step!
-ENV PATH /usr/local/rubinius/gems/bin:/usr/local/rubinius/bin:$PATH
-
-# Bundler is already installed with Rubinius.
-
-# Set the '/app/vendor/bundle' folder as the GEM_HOME - It will preserve
-# the original gem paths - check it with 'gem env':
-ENV GEM_HOME /app/vendor/bundle
+################################################################################
+# Persisted Environment Variables:
+#  1: Set the GEM_HOME to the app's /app/vendor/bundle path. (It will preserve
+#     the original gem paths - check it with 'gem env')
+#  2: The path to the directory where bundler will store the local configuration.
+#  3: Prepend the following paths to $PATH:
+#      - Rubinius binaries, which refuse to get installed in /usr/local/bin
+#      - Rubinius system gem binaries, also not present in /usr/local/bin
+#      - The app's vendored gem binaries
+#      - The app's binaries
+ENV GEM_HOME=/app/vendor/bundle \
+	BUNDLE_APP_CONFIG=/app/vendor/bundle \
+	PATH=/app/bin:/app/vendor/bundle/bin:/usr/local/rubinius/gems/bin:/usr/local/rubinius/bin:$PATH
 
 # Set the image user as the unprivileged 'app' user:
 USER app
@@ -63,6 +71,6 @@ USER app
 WORKDIR /app
 
 # Set BUNDLE_APP_CONFIG to GEM_PATH and set PATH to include app binaries:
-ENV BUNDLE_APP_CONFIG=$GEM_HOME PATH=/app/bin:$GEM_HOME/bin:$PATH
+ENV  PATH=$PATH
 
 CMD ["irb"]
