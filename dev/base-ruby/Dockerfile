@@ -32,11 +32,11 @@ RUN NODE_VERSION=0.12.7 NPM_VERSION=2.13.4 \
   && echo "==================== Installing Watchman ====================" \
   && cd /tmp && git clone https://github.com/facebook/watchman.git \
   && cd watchman && ./autogen.sh && ./configure \
+  && wget https://bootstrap.pypa.io/ez_setup.py -O - | python \
   && make && make install \
   && cd /tmp && rm -rf watchman \
   && echo "============= Cleaning Image Build Dependencies =============" \
   && apt-get purge -y --auto-remove python-dev && rm -rf /var/lib/apt/lists/*
-
 
 # Set the npm prefix to /app, so any globally installed package will be saved in
 # /app/lib/node_modules folder:
