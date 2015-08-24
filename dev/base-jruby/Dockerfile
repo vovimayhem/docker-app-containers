@@ -18,7 +18,7 @@ MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 #       gpg: aka "Julien Gilli <jgilli@fastmail.fm>"
 RUN NODE_VERSION=0.12.7 NPM_VERSION=2.13.4 \
   && echo "============ Installing Image Build Dependencies ============" \
-  && apt-get update && apt-get install -y python-dev \
+  && apt-get update && apt-get install -y python-dev autoconf automake gcc make \
   && echo "===================== Installing NodeJS =====================" \
   && gpg --keyserver pool.sks-keyservers.net --recv-keys 7937DFD2AB06298B2293C3187D33FF9D0246406D 114F43EE0176B71C7BC219DD50A3051F888C628D \
   && curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
@@ -32,11 +32,11 @@ RUN NODE_VERSION=0.12.7 NPM_VERSION=2.13.4 \
   && echo "==================== Installing Watchman ====================" \
   && cd /tmp && git clone https://github.com/facebook/watchman.git \
   && cd watchman && ./autogen.sh && ./configure \
+  && wget https://bootstrap.pypa.io/ez_setup.py -O - | python \
   && make && make install \
   && cd /tmp && rm -rf watchman \
   && echo "============= Cleaning Image Build Dependencies =============" \
-  && apt-get purge -y --auto-remove python-dev && rm -rf /var/lib/apt/lists/*
-
+  && apt-get purge -y --auto-remove python-dev autoconf automake gcc make && rm -rf /var/lib/apt/lists/*
 
 # Set the npm prefix to /app, so any globally installed package will be saved in
 # /app/lib/node_modules folder:
