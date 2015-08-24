@@ -65,7 +65,7 @@ docker build --pull --rm -t vovimayhem/app-dev:base-jruby dev/base-jruby \
 # JRuby Development Images
 
 # 1: JRuby 9000:
-docker build --pull --rm -t vovimayhem/app-dev:jruby-9k dev/jruby-9k \
+docker build --rm -t vovimayhem/app-dev:jruby-9k dev/jruby-9k \
 && docker push vovimayhem/app-dev:jruby-9k \
 && docker tag -f vovimayhem/app-dev:jruby-9k vovimayhem/app-dev:jruby \
 && docker push vovimayhem/app-dev:jruby
