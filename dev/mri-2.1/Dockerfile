@@ -30,7 +30,7 @@ MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 #  - Installing bundler as a system gem as part of the build step.
 #  - Setting the '/app/vendor/bundle' as the GEM_HOME variable
 #  - Adding '/app/bin' and '/app/vendor/bundle/bin' to the PATH variable
-RUN RUBY_MAJOR=2.1 RUBY_VERSION=2.1.6 RUBY_DOWNLOAD_SHA256=1e1362ae7427c91fa53dc9c05aee4ee200e2d7d8970a891c5bd76bee28d28be4 \
+RUN RUBY_MAJOR=2.1 RUBY_VERSION=2.1.7 RUBY_DOWNLOAD_SHA256=f59c1596ac39cc7e60126e7d3698c19f482f04060674fdfe0124e1752ba6dd81 \
 	&& apt-get update \
 	&& apt-get install -y bison libgdbm-dev ruby systemtap-sdt-dev \
 	&& rm -rf /var/lib/apt/lists/* \

@@ -20,7 +20,7 @@ docker build --rm -t vovimayhem/app-dev:base-ruby dev/base-ruby \
 # 1: First, we'll build the MRI old stable, push it to the public registry, and tag it as
 # mri-(major).(minor).(tiny), mri-(major)-(minor):
 docker build --rm -t vovimayhem/app-dev:mri-2.0.0-p645 dev/mri-2.0 \
-&& docker push vovimayhem/app-dev:mri-2.0.0-p645 \
+&& docker push vovimayhem/app-dev:mri-2.0.0-p647 \
 && docker tag -f vovimayhem/app-dev:mri-2.0.0-p645 vovimayhem/app-dev:mri-2.0.0 \
 && docker push vovimayhem/app-dev:mri-2.0.0 \
 && docker tag -f vovimayhem/app-dev:mri-2.0.0-p645 vovimayhem/app-dev:mri-2.0 \
@@ -28,22 +28,22 @@ docker build --rm -t vovimayhem/app-dev:mri-2.0.0-p645 dev/mri-2.0 \
 
 # 2: Then we'll build the MRI previous stable, push it to the public registry,
 # and tag it as mri-(major).(minor):
-docker build --rm -t vovimayhem/app-dev:mri-2.1.6 dev/mri-2.1 \
-&& docker push vovimayhem/app-dev:mri-2.1.6 \
-&& docker tag -f vovimayhem/app-dev:mri-2.1.6 vovimayhem/app-dev:mri-2.1 \
+docker build --rm -t vovimayhem/app-dev:mri-2.1.7 dev/mri-2.1 \
+&& docker push vovimayhem/app-dev:mri-2.1.7 \
+&& docker tag -f vovimayhem/app-dev:mri-2.1.7 vovimayhem/app-dev:mri-2.1 \
 && docker push vovimayhem/app-dev:mri-2.1
 
 # 3: Lastly, build the MRI current stable, push it to the public registry, and
 # tag it as mri-(major).(minor), mri-(major), mri and ruby:
-docker build --rm -t vovimayhem/app-dev:mri-2.2.2 dev/mri-2.2 \
-&& docker push vovimayhem/app-dev:mri-2.2.2 \
-&& docker tag -f vovimayhem/app-dev:mri-2.2.2 vovimayhem/app-dev:mri-2.2 \
+docker build --rm -t vovimayhem/app-dev:mri-2.2.3 dev/mri-2.2 \
+&& docker push vovimayhem/app-dev:mri-2.2.3 \
+&& docker tag -f vovimayhem/app-dev:mri-2.2.3 vovimayhem/app-dev:mri-2.2 \
 && docker push vovimayhem/app-dev:mri-2.2 \
-&& docker tag -f vovimayhem/app-dev:mri-2.2.2 vovimayhem/app-dev:mri-2 \
+&& docker tag -f vovimayhem/app-dev:mri-2.2.3 vovimayhem/app-dev:mri-2 \
 && docker push vovimayhem/app-dev:mri-2 \
-&& docker tag -f vovimayhem/app-dev:mri-2.2.2 vovimayhem/app-dev:mri \
+&& docker tag -f vovimayhem/app-dev:mri-2.2.3 vovimayhem/app-dev:mri \
 && docker push vovimayhem/app-dev:mri \
-&& docker tag -f vovimayhem/app-dev:mri-2.2.2 vovimayhem/app-dev:ruby \
+&& docker tag -f vovimayhem/app-dev:mri-2.2.3 vovimayhem/app-dev:ruby \
 && docker push vovimayhem/app-dev:ruby
 ```
 
