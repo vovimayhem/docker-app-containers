@@ -19,11 +19,11 @@ docker build --rm -t vovimayhem/app-dev:base-ruby dev/base-ruby \
 
 # 1: First, we'll build the MRI old stable, push it to the public registry, and tag it as
 # mri-(major).(minor).(tiny), mri-(major)-(minor):
-docker build --rm -t vovimayhem/app-dev:mri-2.0.0-p645 dev/mri-2.0 \
+docker build --rm -t vovimayhem/app-dev:mri-2.0.0-p647 dev/mri-2.0 \
 && docker push vovimayhem/app-dev:mri-2.0.0-p647 \
-&& docker tag -f vovimayhem/app-dev:mri-2.0.0-p645 vovimayhem/app-dev:mri-2.0.0 \
+&& docker tag -f vovimayhem/app-dev:mri-2.0.0-p647 vovimayhem/app-dev:mri-2.0.0 \
 && docker push vovimayhem/app-dev:mri-2.0.0 \
-&& docker tag -f vovimayhem/app-dev:mri-2.0.0-p645 vovimayhem/app-dev:mri-2.0 \
+&& docker tag -f vovimayhem/app-dev:mri-2.0.0-p647 vovimayhem/app-dev:mri-2.0 \
 && docker push vovimayhem/app-dev:mri-2.0
 
 # 2: Then we'll build the MRI previous stable, push it to the public registry,
