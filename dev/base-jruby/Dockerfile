@@ -36,6 +36,7 @@ RUN NODE_VERSION=0.12.7 NPM_VERSION=2.13.4 \
   && make && make install \
   && cd /tmp && rm -rf watchman \
   && echo "============= Cleaning Image Build Dependencies =============" \
+  && cd /tmp && rm -rf ./* \
   && apt-get purge -y --auto-remove python-dev autoconf automake gcc make && rm -rf /var/lib/apt/lists/*
 
 # Set the npm prefix to /app, so any globally installed package will be saved in
