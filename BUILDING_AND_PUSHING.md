@@ -10,8 +10,8 @@ docker build --pull --rm -t vovimayhem/app:base base \
 && docker push vovimayhem/app:base
 
 # 2: C-ish Ruby App Development Image, which only adds NodeJS:
-docker build --rm -t vovimayhem/app-dev:base-ruby dev/base-ruby \
-&& docker push vovimayhem/app-dev:base-ruby
+docker build --rm -t vovimayhem/app:node-for-c-ish node-for-c-ish \
+&& docker push vovimayhem/app:node-for-c-ish
 
 ################################################################################
 # Ruby MRI (The 'Official' Ruby)
@@ -58,8 +58,8 @@ docker build --pull --rm -t vovimayhem/app:base-java8-jdk base-java8-jdk \
 && docker push vovimayhem/app:base-java8-jdk
 
 # 2: JRuby App Development Image, which only adds NodeJS:
-docker build --pull --rm -t vovimayhem/app-dev:base-jruby dev/base-jruby \
-&& docker push vovimayhem/app-dev:base-jruby
+docker build --rm -t vovimayhem/app:node-for-java-ish node-for-java-ish \
+&& docker push vovimayhem/app:node-for-java-ish
 
 ################################################################################
 # JRuby Development Images
