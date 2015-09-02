@@ -19,7 +19,7 @@ FROM vovimayhem/app:node-for-c-ish
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################
-# 1: Building ruby
+# Building ruby
 # - Taken almost entirely from https://github.com/docker-library/ruby
 #
 # Some of ruby's build scripts are written in ruby. We'll purge this later in
@@ -30,10 +30,10 @@ MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 #  - Installing bundler as a system gem as part of the build step.
 #  - Setting the '/app/vendor/bundle' as the GEM_HOME variable
 #  - Adding '/app/bin' and '/app/vendor/bundle/bin' to the PATH variable
-RUN RUBY_MAJOR=2.1 RUBY_VERSION=2.1.7 RUBYGEMS_VERSION=2.4.8 \
-	RUBY_DOWNLOAD_SHA256=f59c1596ac39cc7e60126e7d3698c19f482f04060674fdfe0124e1752ba6dd81 \
+RUN RUBY_MAJOR=2.2 RUBY_VERSION=2.2.3 RUBYGEMS_VERSION=2.4.8 \
+	RUBY_DOWNLOAD_SHA256=df795f2f99860745a416092a4004b016ccf77e8b82dec956b120f18bdc71edce \
 	&& apt-get update \
-	&& apt-get install -y bison libgdbm-dev ruby systemtap-sdt-dev \
+	&& apt-get install -y bison libgdbm-dev ruby \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
 	&& curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
@@ -42,10 +42,10 @@ RUN RUBY_MAJOR=2.1 RUBY_VERSION=2.1.7 RUBYGEMS_VERSION=2.4.8 \
 	&& rm ruby.tar.gz \
 	&& cd /usr/src/ruby \
 	&& autoconf \
-	&& ./configure --disable-install-doc --enable-dtrace \
+	&& ./configure --disable-install-doc \
 	&& make -j"$(nproc)" \
 	&& make install \
-	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby systemtap-sdt-dev \
+	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby \
 	&& gem update --system $RUBYGEMS_VERSION \
 	&& cd / && rm -r /usr/src/ruby \
 	&& gem install bundler --no-rdoc --no-ri
@@ -62,11 +62,20 @@ ENV GEM_HOME=/app/vendor/bundle \
 	BUNDLE_APP_CONFIG=/app/vendor/bundle \
 	PATH=/app/bin:/app/vendor/bundle/bin:$PATH
 
-# Set the image user as the unprivileged 'app' user:
-USER app
-
 # Set the image's working directory to the '/app' folder, which is the 'app'
 # user's home:
 WORKDIR /app
+
+################################################################################
+# Copy the current context folder (which should include the app's code + Gemfile)
+ONBUILD ADD . /app
+ONBUILD RUN chown -R app /app
+
+# Run bundle install on build:
+ONBUILD RUN bundle install --without development test
+
+# Set the image user as the unprivileged 'app' user:
+# ONBUILD USER app
+################################################################################
 
 CMD ["irb"]

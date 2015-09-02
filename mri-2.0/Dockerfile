@@ -33,7 +33,7 @@ MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 RUN RUBY_MAJOR=2.0 RUBY_VERSION=2.0.0-p647 RUBYGEMS_VERSION=2.4.8 \
 	RUBY_DOWNLOAD_SHA256=c88aaf5b4ec72e2cb7d290ff854f04d135939f6134f517002a9d65d5fc5e5bec \
 	&& apt-get update \
-	&& apt-get install -y bison libgdbm-dev ruby systemtap-sdt-dev \
+	&& apt-get install -y bison libgdbm-dev ruby \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
 	&& curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
@@ -42,13 +42,14 @@ RUN RUBY_MAJOR=2.0 RUBY_VERSION=2.0.0-p647 RUBYGEMS_VERSION=2.4.8 \
 	&& rm ruby.tar.gz \
 	&& cd /usr/src/ruby \
 	&& autoconf \
-	&& ./configure --disable-install-doc --enable-dtrace \
+	&& ./configure --disable-install-doc \
 	&& make -j"$(nproc)" \
 	&& make install \
-	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby systemtap-sdt-dev \
+	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby \
 	&& gem update --system $RUBYGEMS_VERSION \
 	&& cd / && rm -r /usr/src/ruby \
-	&& gem install bundler --no-rdoc --no-ri
+	&& gem install bundler --no-rdoc --no-ri \
+	&& bundle config --global frozen 1
 
 ################################################################################
 # Persisted Environment Variables:
@@ -68,5 +69,8 @@ USER app
 # Set the image's working directory to the '/app' folder, which is the 'app'
 # user's home:
 WORKDIR /app
+
+# Run bundle install on build:
+ONBUILD RUN bundle install --deployment --without development test
 
 CMD ["irb"]

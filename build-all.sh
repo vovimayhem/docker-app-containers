@@ -25,6 +25,30 @@ docker build --pull --rm -t vovimayhem/app:base base \
 && docker tag -f vovimayhem/app-dev:mri-2.2.3 vovimayhem/app-dev:ruby \
 && docker push vovimayhem/app-dev:ruby
 
+# Production:
+docker build --rm -t vovimayhem/app:mri-2.0.0-p647 mri-2.0 \
+&& docker push vovimayhem/app:mri-2.0.0-p647 \
+&& docker tag -f vovimayhem/app:mri-2.0.0-p647 vovimayhem/app:mri-2.0.0 \
+&& docker push vovimayhem/app:mri-2.0.0 \
+&& docker tag -f vovimayhem/app:mri-2.0.0-p647 vovimayhem/app:mri-2.0 \
+&& docker push vovimayhem/app:mri-2.0 \
+&& docker build --rm -t vovimayhem/app:mri-2.1.7 mri-2.1 \
+&& docker push vovimayhem/app:mri-2.1.7 \
+&& docker tag -f vovimayhem/app:mri-2.1.7 vovimayhem/app:mri-2.1 \
+&& docker push vovimayhem/app:mri-2.1 \
+&& docker build --rm -t vovimayhem/app:mri-2.2.3 mri-2.2 \
+&& docker push vovimayhem/app:mri-2.2.3 \
+&& docker tag -f vovimayhem/app:mri-2.2.3 vovimayhem/app:mri-2.2 \
+&& docker push vovimayhem/app:mri-2.2 \
+&& docker tag -f vovimayhem/app:mri-2.2.3 vovimayhem/app:mri-2 \
+&& docker push vovimayhem/app:mri-2 \
+&& docker tag -f vovimayhem/app:mri-2.2.3 vovimayhem/app:mri \
+&& docker push vovimayhem/app:mri \
+&& docker tag -f vovimayhem/app:mri-2.2.3 vovimayhem/app:ruby \
+&& docker push vovimayhem/app:ruby
+
+################################################################################
+
 # Java-ish:
 docker build --pull --rm -t vovimayhem/app:base-java8-jdk base-java8-jdk \
 && docker push vovimayhem/app:base-java8-jdk \

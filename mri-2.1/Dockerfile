@@ -19,7 +19,7 @@ FROM vovimayhem/app:node-for-c-ish
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################
-# Building ruby
+# 1: Building ruby
 # - Taken almost entirely from https://github.com/docker-library/ruby
 #
 # Some of ruby's build scripts are written in ruby. We'll purge this later in
@@ -30,10 +30,10 @@ MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 #  - Installing bundler as a system gem as part of the build step.
 #  - Setting the '/app/vendor/bundle' as the GEM_HOME variable
 #  - Adding '/app/bin' and '/app/vendor/bundle/bin' to the PATH variable
-RUN RUBY_MAJOR=2.2 RUBY_VERSION=2.2.3 RUBYGEMS_VERSION=2.4.8 \
-	RUBY_DOWNLOAD_SHA256=df795f2f99860745a416092a4004b016ccf77e8b82dec956b120f18bdc71edce \
+RUN RUBY_MAJOR=2.1 RUBY_VERSION=2.1.7 RUBYGEMS_VERSION=2.4.8 \
+	RUBY_DOWNLOAD_SHA256=f59c1596ac39cc7e60126e7d3698c19f482f04060674fdfe0124e1752ba6dd81 \
 	&& apt-get update \
-	&& apt-get install -y bison libgdbm-dev ruby systemtap-sdt-dev \
+	&& apt-get install -y bison libgdbm-dev ruby \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
 	&& curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
@@ -42,13 +42,14 @@ RUN RUBY_MAJOR=2.2 RUBY_VERSION=2.2.3 RUBYGEMS_VERSION=2.4.8 \
 	&& rm ruby.tar.gz \
 	&& cd /usr/src/ruby \
 	&& autoconf \
-	&& ./configure --disable-install-doc --enable-dtrace \
+	&& ./configure --disable-install-doc \
 	&& make -j"$(nproc)" \
 	&& make install \
-	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby systemtap-sdt-dev \
+	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby \
 	&& gem update --system $RUBYGEMS_VERSION \
 	&& cd / && rm -r /usr/src/ruby \
-	&& gem install bundler --no-rdoc --no-ri
+	&& gem install bundler --no-rdoc --no-ri \
+	&& bundle config --global frozen 1
 
 ################################################################################
 # Persisted Environment Variables:
@@ -68,5 +69,8 @@ USER app
 # Set the image's working directory to the '/app' folder, which is the 'app'
 # user's home:
 WORKDIR /app
+
+# Run bundle install on build:
+ONBUILD RUN bundle install --deployment --without development test
 
 CMD ["irb"]
