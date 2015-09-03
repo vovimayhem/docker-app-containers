@@ -15,11 +15,11 @@
 #  - Sets the GEM_HOME directory to the '/app/vendor/bundle' folder, so gems
 #  can be inspected by the developer & provided by mounting the app in the
 #  volume.
-FROM vovimayhem/app:node-for-c-ish
+FROM vovimayhem/app-dev:base-c-ish
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################
-# Building ruby
+# 1: Building ruby
 # - Taken almost entirely from https://github.com/docker-library/ruby
 #
 # Some of ruby's build scripts are written in ruby. We'll purge this later in

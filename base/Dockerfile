@@ -21,7 +21,3 @@ RUN cp /etc/default/useradd /etc/default/useradd.bak \
   && rm -rf /etc/default/useradd \
   && mv /etc/default/useradd.bak /etc/default/useradd \
   && rm /app/.bash_logout /app/.bashrc /app/.profile
-
-# Define the '/app' directory as a volume, to prevent persistance of files in
-# this folder:
-VOLUME /app

@@ -4,6 +4,8 @@ docker build --pull --rm -t vovimayhem/app:base base \
 && docker push vovimayhem/app:base \
 && docker build --rm -t vovimayhem/app:node-for-c-ish node-for-c-ish \
 && docker push vovimayhem/app:node-for-c-ish \
+&& docker build --rm -t vovimayhem/app-dev:base-c-ish dev/base-c-ish \
+&& docker push vovimayhem/app-dev:base-c-ish \
 && docker build --rm -t vovimayhem/app-dev:mri-2.0.0-p647 dev/mri-2.0 \
 && docker push vovimayhem/app-dev:mri-2.0.0-p647 \
 && docker tag -f vovimayhem/app-dev:mri-2.0.0-p647 vovimayhem/app-dev:mri-2.0.0 \
@@ -30,6 +32,8 @@ docker build --pull --rm -t vovimayhem/app:base-java8-jdk base-java8-jdk \
 && docker push vovimayhem/app:base-java8-jdk \
 && docker build --rm -t vovimayhem/app:node-for-java-ish node-for-java-ish \
 && docker push vovimayhem/app:node-for-java-ish \
+&& docker build --rm -t vovimayhem/app-dev:base-java-ish dev/base-java-ish \
+&& docker push vovimayhem/app-dev:base-java-ish \
 && docker build --rm -t vovimayhem/app-dev:jruby-9k dev/jruby-9k \
 && docker push vovimayhem/app-dev:jruby-9k \
 && docker tag -f vovimayhem/app-dev:jruby-9k vovimayhem/app-dev:jruby \

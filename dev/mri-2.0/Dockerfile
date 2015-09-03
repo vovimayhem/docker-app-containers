@@ -15,7 +15,7 @@
 #  - Sets the GEM_HOME directory to the '/app/vendor/bundle' folder, so gems
 #  can be inspected by the developer & provided by mounting the app in the
 #  volume.
-FROM vovimayhem/app:node-for-c-ish
+FROM vovimayhem/app-dev:base-c-ish
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 ################################################################################

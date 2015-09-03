@@ -16,7 +16,7 @@
 #  can be inspected by the developer and provided by mounting the app in the
 #  volume.
 #
-FROM vovimayhem/app:node-for-java-ish
+FROM vovimayhem/app-dev:base-java-ish
 MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 
 RUN JRUBY_VERSION=9.0.0.0 JRUBY_SHA256=655665db3a1dc0462cba99d45532ab57d8416b5f168d8a0081bde9b7a93a394e \
