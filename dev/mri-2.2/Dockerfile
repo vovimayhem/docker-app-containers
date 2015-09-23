@@ -32,6 +32,7 @@ MAINTAINER Roberto Quintanilla <roberto.quintanilla@gmail.com>
 #  - Adding '/app/bin' and '/app/vendor/bundle/bin' to the PATH variable
 RUN RUBY_MAJOR=2.2 RUBY_VERSION=2.2.3 RUBYGEMS_VERSION=2.4.8 \
 	RUBY_DOWNLOAD_SHA256=df795f2f99860745a416092a4004b016ccf77e8b82dec956b120f18bdc71edce \
+	BUNDLER_VERSION=1.10.6 \
 	&& apt-get update \
 	&& apt-get install -y bison libgdbm-dev ruby systemtap-sdt-dev \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -48,19 +49,21 @@ RUN RUBY_MAJOR=2.2 RUBY_VERSION=2.2.3 RUBYGEMS_VERSION=2.4.8 \
 	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby systemtap-sdt-dev \
 	&& gem update --system $RUBYGEMS_VERSION \
 	&& cd / && rm -r /usr/src/ruby \
-	&& gem install bundler --no-rdoc --no-ri
+	&& gem install bundler --version "$BUNDLER_VERSION" --no-rdoc --no-ri \
+	&& mkdir -p /usr/local/bundle \
+	&& chown app:app /usr/local/bundle
 
 ################################################################################
 # Persisted Environment Variables:
-#  1: Set the GEM_HOME to the app's /app/vendor/bundle path. (It will preserve
+#  1: Set the GEM_HOME to the container's /usr/local/bundle path. (It will preserve
 #     the original gem paths - check it with 'gem env')
 #  2: The path to the directory where bundler will store the local configuration.
 #  3: Prepend the following paths to $PATH:
-#      - The app's vendored gem binaries
+#      - The container's gem binaries
 #      - The app's binaries
-ENV GEM_HOME=/app/vendor/bundle \
-	BUNDLE_APP_CONFIG=/app/vendor/bundle \
-	PATH=/app/bin:/app/vendor/bundle/bin:$PATH
+ENV GEM_HOME=/usr/local/bundle \
+	BUNDLE_APP_CONFIG=/usr/local/bundle \
+	PATH=/app/bin:/usr/local/bundle/bin:$PATH
 
 # Set the image user as the unprivileged 'app' user:
 USER app
